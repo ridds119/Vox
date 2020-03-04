@@ -2,13 +2,14 @@
 // PURPOSE: The voicebot will attend the call in the out of hours Company time, will have conversation with the caller and send the conversation via an email back to the company.
 require(Modules.AI)
 
-const MAX_NO_INPUT_TIME = 8000
+const MAX_NO_INPUT_TIME = 12000
 const VOICEBOT_PHONE_NUMBER = "+447482874889"
 var dialogflow, call, hangup,
     number,
     waitForCallForwarding = false,
-    agent_caller_id = "+918017189396",
-    start_date, end_date, html="<!DOCTYPE html><html><body>";
+    agent_caller_id = "+442077291000",
+    html="<!DOCTYPE html><html><body>",
+    sessionId;
 
 // Fire the "NO_INPUT" event if there is no response for MAX_NO_INPUT_TIME
 class Timer {
@@ -37,15 +38,10 @@ class Timer {
 
 // Create outbound call as soon as StartScenarios HTTP API arrives
 VoxEngine.addEventListener(AppEvents.Started, (e) => {
-     start_date = new Date();
-     start_date.setSeconds(start_date.getSeconds() - 30);
-     Logger.write("Start date:   "+start_date);
-    //  httpHandler();
-    //onCallDisconnected();
-     start_date.setSeconds(start_date.getSeconds() - 30);
+  sessionId = e.sessionId
      number = VoxEngine.customData() // we assume that a callee's number arrives as customData in e.164 format
      call = VoxEngine.callPSTN(number, VOICEBOT_PHONE_NUMBER)
-     html += `<h4 style="align:center"><u>New Call Initiated</u></h4><hr><p style="background-color:yellow;"><b>Voice-bot Number</b>: ${VOICEBOT_PHONE_NUMBER}</p><p style="background-color:yellow;"><b>Dailed Number</b>: ${number}</p><hr>`;            
+     html += `<h4 style="align:center"><u>New Call Initiated</u></h4><hr><p style="background-color:yellow;"><b>Voice-bot Number</b>: ${VOICEBOT_PHONE_NUMBER}</p><p style="background-color:yellow;"><b>Dialed Number</b>: ${number}</p><hr>`;            
      call.addEventListener(CallEvents.Connected, onCallConnected)
      call.addEventListener(CallEvents.Disconnected, onCallDisconnected)
      call.addEventListener(CallEvents.Failed, onCallDisconnected)
@@ -53,7 +49,7 @@ VoxEngine.addEventListener(AppEvents.Started, (e) => {
 
 function onCallConnected(e) {
   // Create Dialogflow object
-  html += `<p> CALL CONNECTED ON: ${new Date().toDateString()} AT ${new Date().toTimeString()}}</p><hr>`
+  html += `<p> Call connected on: <font style="color:#07a;">  ${new Date().toDateString()}</font> at <font style="color:#07a;">${new Date().toTimeString()}</font></p><hr>`
 	dialogflow = AI.createDialogflow({
 	  lang: DialogflowLanguage.ENGLISH_GB, agentId: 2293
 	})
@@ -84,17 +80,18 @@ function onCallConnected(e) {
 
 
 function onCallDisconnected(){
-  html += `<hr><p> CALL DISCONNECTED ON: ${new Date().toDateString()} AT ${new Date().toTimeString()}</p><hr>`
+  dialogflow.stop()
+  html += `<hr><p> Call disconnected on: <font style="color:#07a;">  ${new Date().toDateString()}</font> at <font style="color:#07a;">${new Date().toTimeString()}</font></p><hr>`
   Logger.write("############ html ############")
   Logger.write(html)
   try{
     Net.sendMail("smtp.gmail.com",
     "call.bot@rhapsodymedia.com",
-    "riddhik@mindfiresolutions.com",
-    "Mail from Vox Application",
-    "Body of the letter",
+    "darren.ayles@rhapsodymedia.com",
+    `session-id: ${sessionId}`,
+    "",
     function stub(){},
-    {login: "call.bot@rhapsodymedia.com", password:"!GRBpp549", html: html});
+    {login: "call.bot@rhapsodymedia.com", password:"!GRBpp549", html: html, cc: "riddhik@mindfiresolutions.com" });
   }catch(e){
     Logger.write(e)
   }
@@ -173,4 +170,5 @@ function processTelephonyMessage(msg) {
     // Example: call.startPlayback(url)
   }
 }
+
 
