@@ -80,13 +80,14 @@ function onCallConnected(e) {
 }
 function onCallDisconnected() {
   dialogflow.stop()
+  Logger.write("CONTACT NAME:  "+ contactName);
   html += `<hr><p> Call disconnected on: <font style="color:#07a;">  ${new Date().toDateString()}</font> at <font style="color:#07a;">${new Date().toTimeString()}</font></p><hr>`
   Logger.write("############ html ############")
   Logger.write(html)
   try {
     Net.sendMail("smtp.gmail.com",
       "call.bot@rhapsodymedia.com",
-      "ridds119@gmail.com",
+      "darren.ayles@rhapsodymedia.com",
       `Message for ${contactName}`,
       "",
       function stub() { },
