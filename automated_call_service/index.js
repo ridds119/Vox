@@ -87,7 +87,7 @@ function onCallDisconnected(){
   try{
     Net.sendMail("smtp.gmail.com",
     "call.bot@rhapsodymedia.com",
-    "darren.ayles@rhapsodymedia.com",
+    "ridds119@gmail.com",
     `session-id: ${sessionId}`,
     "",
     function stub(){},
