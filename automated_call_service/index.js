@@ -101,6 +101,52 @@ function onCallDisconnected(){
 }
 
 // Handle Dialogflow responses
+// function onDialogflowResponse(e) {
+//   Logger.write("RESPONSE RECEIVED IS:  " + e.response.queryResult)
+//   if(e.response.queryResult !== undefined && e.response.queryResult.queryText !== undefined){
+//     html += `<p style="background-color:#f5f5f5;"><b> User</b>: ${e.response.queryResult.queryText} </p>`
+//   }
+//   if(e.response.queryResult !== undefined && e.response.queryResult.fulfillmentText !== undefined){
+//     html += `<p style="background-color:#f5f5f5;"><b> Agent</b>: ${e.response.queryResult.fulfillmentText} </p>`
+//   }
+//   if(e.response.queryResult !== undefined && e.response.queryResult.outputContexts !== undefined){
+//     let outputContexts = e.response.queryResult.outputContexts[e.response.queryResult.outputContexts.length - 1]
+//     if (outputContexts.parameters !== undefined && outputContexts.parameters["no-input"] !== undefined && outputContexts.parameters["no-input"] > 3){
+//         Logger.write("NO-INPUT-COUNT: " + outputContexts.parameters["no-input"])
+//         if(outputContexts.parameters["no-match"] <= 2){
+//           call.hangup();
+//         }
+//     }
+//   }
+  
+//   // If DialogflowResponse with queryResult received - the call stops sending media to Dialogflow
+//   // in case of response with queryResult but without responseId we can continue sending media to dialogflow
+//   if (e.response.queryResult !== undefined && e.response.responseId === undefined) {
+//     if(!timer.expired && !waitForCallForwarding)
+//       call.sendMediaTo(dialogflow)
+//   } else if (e.response.queryResult !== undefined && e.response.responseId !== undefined) {
+//    // Do whatever required with e.response.queryResult or e.response.webhookStatus
+//         // If we need to hangup because end of conversation has been reached
+//         if (e.response.queryResult.diagnosticInfo !== undefined &&
+//            e.response.queryResult.diagnosticInfo.end_conversation == true) {
+//            hangup = true
+//         }
+
+//     // Telephony messages arrive in fulfillmentMessages array
+//     if (e.response.queryResult.fulfillmentMessages != undefined) {
+//      e.response.queryResult.fulfillmentMessages.forEach((msg) => {
+//        if (msg.platform !== undefined && msg.platform === "TELEPHONY"){
+//           waitForCallForwarding = true
+//           Logger.write("Forwarding Call to Real Agent") 
+//           processTelephonyMessage(msg)
+//        } 
+//      })
+//    }
+//   }
+// }
+
+
+
 function onDialogflowResponse(e) {
   if(e.response.queryResult !== undefined && e.response.queryResult.queryText !== undefined){
     html += `<p style="background-color:#f5f5f5;"><b> User</b>: ${e.response.queryResult.queryText} </p>`
